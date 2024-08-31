@@ -11,8 +11,8 @@ namespace BookStoreApi.Models
         [Key]
         public int AuthorId { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Name is required.")]
+        [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters.")]
         public string Name { get; set; }
 
         // Navigation property

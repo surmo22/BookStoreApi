@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-namespace BookStoreApi.Models
+
+namespace BookStoreApi.Models.DTO.Book
 {
-    public class Book
+    public record InputBookDto
     {
-        [Key]
-        public int BookId { get; set; }
+        public int BookId { get; init; }
 
         [Required(ErrorMessage = "Title is required")]
         [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
@@ -20,13 +19,7 @@ namespace BookStoreApi.Models
         [Required]
         public int AuthorId { get; set; }
 
-        [ForeignKey("AuthorId")]
-        public Author Author { get; set; }
-
         [Required]
         public int GenreId { get; set; }
-
-        [ForeignKey("GenreId")]
-        public Genre Genre { get; set; }
     }
 }
