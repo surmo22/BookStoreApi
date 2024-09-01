@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using BookStoreApi.Data.Repository.Implementations;
 using BookStoreApi.Data.Repository.Interfaces;
 using BookStoreApi.Models;
+using BookStoreApi.Models.DTO.Author;
 using BookStoreApi.Models.DTO.Book;
+using BookStoreApi.Models.DTO.Genre;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +14,12 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly IRepository<Book> _bookRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IRepository<Author> _authorRepository;
         private readonly IRepository<Genre> _genreRepository;
         private readonly IMapper _mapper;
 
-        public BooksController(IRepository<Book> bookRepository, IRepository<Author> authorRepository, IRepository<Genre> genreRepository, IMapper mapper)
+        public BooksController(IBookRepository bookRepository, IRepository<Author> authorRepository, IRepository<Genre> genreRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
@@ -26,15 +29,16 @@ namespace BookStoreApi.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
         {
             var books = await _bookRepository.GetAllAsync();
-            return Ok(books);
+            var booksDto = books.Select(book => _mapper.Map<BookDto>(book));
+            return Ok(booksDto);
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<BookDto>> GetBook(int id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
 
@@ -43,12 +47,12 @@ namespace BookStoreApi.Controllers
                 return NotFound();
             }
 
-            return book;
+            return Ok(_mapper.Map<BookDto>(book));
         }
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook([FromBody] InputBookDto bookDto)
+        public async Task<ActionResult<Book>> PostBook([FromBody] BookDto bookDto)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +70,7 @@ namespace BookStoreApi.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, [FromBody] InputBookDto bookDto)
+        public async Task<IActionResult> PutBook(int id, [FromBody] BookDto bookDto)
         {
             if (id != bookDto.BookId)
             {
@@ -94,6 +98,21 @@ namespace BookStoreApi.Controllers
 
             await _bookRepository.RemoveAsync(book);
             return NoContent();
+        }
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<BookDto>>> SearchBooks([FromQuery] string? title, [FromQuery] string? author, [FromQuery] string? genre)
+        {
+            var books = await _bookRepository.SearchBooksAsync(title, author, genre);
+
+            if (books == null || !books.Any())
+            {
+                return NotFound("No books found matching the criteria.");
+            }
+
+            
+            var bookDtos = books.Select(book => _mapper.Map<BookDto>(book));
+
+            return Ok(bookDtos);
         }
     }
 }

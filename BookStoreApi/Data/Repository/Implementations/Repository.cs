@@ -21,11 +21,6 @@ namespace BookStoreApi.Data.Repository.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _entities.Where(predicate).ToListAsync();
-        }
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _entities.ToListAsync();

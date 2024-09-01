@@ -22,15 +22,16 @@ namespace BookStoreApi.Controllers
 
         // GET: api/Genres
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
+        public async Task<ActionResult<IEnumerable<GenreDto>>> GetGenres()
         {
             var genres = await _genreRepository.GetAllAsync();
-            return Ok(genres);
+            var genresDto = genres.Select(genre => _mapper.Map<GenreDto>(genre));
+            return Ok(genresDto);
         }
 
         // GET: api/Genres/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Genre>> GetGenre(int id)
+        public async Task<ActionResult<GenreDto>> GetGenre(int id)
         {
             var genre = await _genreRepository.GetByIdAsync(id);
 
@@ -39,12 +40,12 @@ namespace BookStoreApi.Controllers
                 return NotFound();
             }
 
-            return genre;
+            return Ok(_mapper.Map<GenreDto>(genre));
         }
 
         // POST: api/Genres
         [HttpPost]
-        public async Task<ActionResult<Genre>> PostGenre([FromBody] InputGenreDto genreDto)
+        public async Task<ActionResult<Genre>> PostGenre([FromBody] GenreDto genreDto)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +58,7 @@ namespace BookStoreApi.Controllers
 
         // PUT: api/Genres/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGenre(int id, [FromBody] Genre genreDto)
+        public async Task<IActionResult> PutGenre(int id, [FromBody] GenreDto genreDto)
         {
             if (id != genreDto.GenreId)
             {

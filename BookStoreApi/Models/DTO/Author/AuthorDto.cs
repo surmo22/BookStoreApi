@@ -2,7 +2,7 @@
 
 namespace BookStoreApi.Models.DTO.Author
 {
-    public record InputAuthorDto
+    public record AuthorDto
     {
         public int AuthorId { get; init; }
 

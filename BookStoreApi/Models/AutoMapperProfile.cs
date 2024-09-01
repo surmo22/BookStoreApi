@@ -11,9 +11,9 @@ namespace BookStoreApi.Models
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<InputAuthorDto, Author>();
-                config.CreateMap<InputBookDto, Book>();
-                config.CreateMap<InputGenreDto, Genre>();
+                config.CreateMap<AuthorDto, Author>().ReverseMap();
+                config.CreateMap<BookDto, Book>().ReverseMap();
+                config.CreateMap<GenreDto, Genre>().ReverseMap();
             });
 
             return mappingConfig;

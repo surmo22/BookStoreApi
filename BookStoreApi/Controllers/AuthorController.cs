@@ -22,15 +22,16 @@ namespace BookStoreApi.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
         {
             var authors = await _authorRepository.GetAllAsync();
-            return Ok(authors);
+            var authorsDto = authors.Select(author => _mapper.Map<AuthorDto>(author));
+            return Ok(authorsDto);
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDto>> GetAuthor(int id)
         {
             var author = await _authorRepository.GetByIdAsync(id);
 
@@ -39,12 +40,12 @@ namespace BookStoreApi.Controllers
                 return NotFound();
             }
 
-            return author;
+            return Ok(_mapper.Map<AuthorDto>(author));
         }
 
         // POST: api/Authors
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor([FromBody] InputAuthorDto authorDto)
+        public async Task<ActionResult<Author>> PostAuthor([FromBody] AuthorDto authorDto)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +59,7 @@ namespace BookStoreApi.Controllers
 
         // PUT: api/Authors/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAuthor(int id, [FromBody] InputAuthorDto author)
+        public async Task<IActionResult> PutAuthor(int id, [FromBody] AuthorDto author)
         {
             if (id != author.AuthorId)
             {

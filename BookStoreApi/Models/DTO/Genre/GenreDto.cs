@@ -2,7 +2,7 @@
 
 namespace BookStoreApi.Models.DTO.Genre
 {
-    public class InputGenreDto
+    public class GenreDto
     {
         public int GenreId { get; set; }
 
